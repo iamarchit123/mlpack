@@ -35,7 +35,8 @@ class BestBinaryNumericSplit
    * Check if we can split a node.  If we can split a node in a way that
    * improves on 'bestGain', then we return the improved gain.  Otherwise we
    * return the value 'bestGain'.  If a split is made, then classProbabilities
-   * and aux may be modified.
+   * and aux may be modified. This will be used for classification. Labels
+   * should be of type size_t.
    *
    * @param bestGain Best gain seen so far (we'll only split if we find gain
    *      better than this).
@@ -57,6 +58,37 @@ class BestBinaryNumericSplit
       const VecType& data,
       const arma::Row<size_t>& labels,
       const size_t numClasses,
+      const WeightVecType& weights,
+      const size_t minimumLeafSize,
+      const double minimumGainSplit,
+      arma::Col<typename VecType::elem_type>& classProbabilities,
+      AuxiliarySplitInfo<typename VecType::elem_type>& aux);
+
+  /**
+   * Check if we can split a node.  If we can split a node in a way that
+   * improves on 'bestGain', then we return the improved gain.  Otherwise we
+   * return the value 'bestGain'.  If a split is made, then classProbabilities
+   * and aux may be modified. This will be used for regression. Predictors
+   * should be of type arma::rowvec.
+   *
+   * @param bestGain Best gain seen so far (we'll only split if we find gain
+   *      better than this).
+   * @param data The dimension of data points to check for a split in.
+   * @param predictors Predicted value for each point.
+   * @param weights Weights associated with labels.
+   * @param minimumLeafSize Minimum number of points in a leaf node for
+   *      splitting.
+   * @param minimumGainSplit Minimum gain split.
+   * @param classProbabilities Class probabilities vector, which may be filled
+   *      with split information a successful split.
+   * @param aux Auxiliary split information, which may be modified on a
+   *      successful split.
+   */
+  template<bool UseWeights, typename VecType, typename WeightVecType>
+  static double SplitIfBetter(
+      const double bestGain,
+      const VecType& data,
+      const arma::rowvec& predictors,
       const WeightVecType& weights,
       const size_t minimumLeafSize,
       const double minimumGainSplit,

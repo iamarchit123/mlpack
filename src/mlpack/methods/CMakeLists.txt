@@ -11,6 +11,7 @@ set(DIRS
   cf
   dbscan
   decision_tree
+  decision_tree_regression
   det
   emst
   fastmks

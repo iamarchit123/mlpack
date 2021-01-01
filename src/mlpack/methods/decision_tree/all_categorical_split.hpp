@@ -38,6 +38,7 @@ class AllCategoricalSplit
    * return the value 'bestGain'.  If a split is made, then classProbabilities
    * and aux may be modified.  For this particular split type, aux will be empty
    * and classProbabilities will hold one element---the number of children.
+   * Used for classification.
    *
    * @param bestGain Best gain seen so far (we'll only split if we find gain
    *      better than this).
@@ -61,6 +62,41 @@ class AllCategoricalSplit
       const size_t numCategories,
       const arma::Row<size_t>& labels,
       const size_t numClasses,
+      const WeightVecType& weights,
+      const size_t minimumLeafSize,
+      const double minimumGainSplit,
+      arma::Col<typename VecType::elem_type>& classProbabilities,
+      AuxiliarySplitInfo<typename VecType::elem_type>& aux);
+
+  /**
+   * Check if we can split a node.  If we can split a node in a way that
+   * improves on 'bestGain', then we return the improved gain.  Otherwise we
+   * return the value 'bestGain'.  If a split is made, then classProbabilities
+   * and aux may be modified.  For this particular split type, aux will be empty
+   * and classProbabilities will hold one element---the number of children.
+   * Used for regression.
+   *
+   * @param bestGain Best gain seen so far (we'll only split if we find gain
+   *      better than this).
+   * @param data The dimension of data points to check for a split in.
+   * @param numCategories Number of categories in the categorical data.
+   * @param labels Labels for each point.
+   * @param numClasses Number of classes in the dataset.
+   * @param weights Weights associated with labels.
+   * @param minimumLeafSize Minimum number of points in a leaf node for
+   *      splitting.
+   * @param classProbabilities Class probabilities vector, which may be filled
+   *      with split information a successful split.
+   * @param minimumGainSplit Minimum  gain split.
+   * @param aux Auxiliary split information, which may be modified on a
+   *      successful split.
+   */
+  template<bool UseWeights, typename VecType, typename WeightVecType>
+  static double SplitIfBetter(
+      const double bestGain,
+      const VecType& data,
+      const size_t numCategories,
+      const arma::rowvec& predictors,
       const WeightVecType& weights,
       const size_t minimumLeafSize,
       const double minimumGainSplit,
